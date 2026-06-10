@@ -1,9 +1,11 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import bcrypt from 'bcryptjs';
 import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import Course from './models/course.model.js';
+import User from './models/user.model.js';
 import reminderScheduler from './utils/reminderScheduler.js';
 
 import authRoutes from './routes/auth.route.js';
@@ -31,7 +33,39 @@ const ensureDefaultCourses = async () => {
   );
 };
 
-connectDB().then(() => ensureDefaultCourses());
+const ensureDefaultAdmin = async () => {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminEmail || !adminPassword) {
+    return;
+  }
+
+  const existingAdmin = await User.findOne({ email: adminEmail });
+  if (existingAdmin) {
+    return;
+  }
+
+  const passwordHash = await bcrypt.hash(adminPassword, 10);
+
+  await User.create({
+    name: 'Admin User',
+    email: adminEmail,
+    passwordHash,
+    role: 'admin',
+    status: 'Active',
+    branch: 'CSE',
+    year: 4,
+    cgpa: 9.5,
+    scholarNo: 'ADMIN001',
+    course: (await Course.findOne({ name: 'BTech' }))?._id,
+  });
+};
+
+connectDB().then(async () => {
+  await ensureDefaultCourses();
+  await ensureDefaultAdmin();
+});
 
 app.use(cors());
 app.use(express.json());
