@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (userData) => {
     try {
       const response = await api.post('/auth/signup', userData);
-      toast.success('Registration successful! Please wait for admin approval.');
+      toast.success('Registration successful! You can sign in now.');
       return response.data;
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';

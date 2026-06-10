@@ -6,6 +6,12 @@ import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { BRANCHES } from '../constants/branches';
 
+const DEFAULT_COURSES = [
+  { _id: 'btech', name: 'BTech' },
+  { _id: 'mtech', name: 'MTech' },
+  { _id: 'mca', name: 'MCA' },
+];
+
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,16 +34,18 @@ const Signup = () => {
     const fetchCourses = async () => {
       try {
         const response = await api.get('/courses');
-        setCourses(response.data || []);
+        const payload = response?.data;
+        const courseList = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : [];
+
+        setCourses(courseList.length > 0 ? courseList : DEFAULT_COURSES);
       } catch (error) {
         console.error('Error fetching courses:', error);
-        setError('Failed to load courses. Please try again.');
-        // Set some default courses as fallback
-        setCourses([
-          { _id: 'default-btech', name: 'BTech' },
-          { _id: 'default-mtech', name: 'MTech' },
-          { _id: 'default-mca', name: 'MCA' }
-        ]);
+        setCourses(DEFAULT_COURSES);
+        setError('Failed to load courses from the server. Showing default options.');
       } finally {
         setLoadingCourses(false);
       }

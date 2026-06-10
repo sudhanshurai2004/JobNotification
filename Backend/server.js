@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
+import Course from './models/course.model.js';
 import reminderScheduler from './utils/reminderScheduler.js';
 
 import authRoutes from './routes/auth.route.js';
@@ -15,7 +16,22 @@ import taskRoutes from './routes/task.route.js';
 dotenv.config();
 
 const app = express();
-connectDB();
+
+const ensureDefaultCourses = async () => {
+  const defaults = [
+    { name: 'BTech', duration: 4, allowedBranches: ['CSE','ECE','ME','EE','CE','MDS','CHE','MME'] },
+    { name: 'MTech', duration: 2, allowedBranches: ['CSE','ECE','ME','EE','CE','MDS'] },
+    { name: 'MCA', duration: 2, allowedBranches: ['MCA'] },
+  ];
+
+  await Promise.all(
+    defaults.map((course) =>
+      Course.updateOne({ name: course.name }, { $setOnInsert: course }, { upsert: true })
+    )
+  );
+};
+
+connectDB().then(() => ensureDefaultCourses());
 
 app.use(cors());
 app.use(express.json());

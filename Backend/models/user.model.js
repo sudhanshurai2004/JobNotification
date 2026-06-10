@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   cgpa: { type: Number, required: [true, 'CGPA is required'], min: [0, 'CGPA cannot be negative'], max: [10, 'CGPA cannot exceed 10'] },
   scholarNo: { type: String, required: [true, 'Scholar number is required'], unique: true, trim: true },
   role: { type: String, enum: ['student', 'admin'], default: 'student' },
-  status: { type: String, enum: ['Pending', 'Active', 'Rejected'], default: 'Pending' },
+  status: { type: String, enum: ['Pending', 'Active', 'Rejected'], default: 'Active' },
   emailPreferences: {
     taskReminders: { type: Boolean, default: true },
     newCompanyNotifications: { type: Boolean, default: true },
