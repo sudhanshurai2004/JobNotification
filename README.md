@@ -2,7 +2,7 @@
 
 A full-stack platform for college job notifications, built with **Node.js/Express** (backend) and **React + Vite** (frontend).
 
-**GitHub Repo:** [https://github.com/tictac1213/JobNotification.git](https://github.com/sudhanshurai2004/JobNotification.git)
+**GitHub Repo:** [https://github.com/sudhanshurai2004/JobNotification.git](https://github.com/sudhanshurai2004/JobNotification.git)
 
 ---
 
